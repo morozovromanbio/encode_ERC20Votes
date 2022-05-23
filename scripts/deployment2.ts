@@ -88,5 +88,5 @@ main().catch((error) => {
   process.exitCode = 1;
 });
 
-// Deployed contract in the recording: 0x1Af1CD6d6da31b1a8add5b5F48120410ddEAE4be
-// Token Tracker: https://ropsten.etherscan.io/token/0x1Af1CD6d6da31b1a8add5b5F48120410ddEAE4be
+// Deployed TOKEN contract in the recording:  0x1f159032A02ebd98BA29A5Ae9FCa1BB742b04cF4
+//

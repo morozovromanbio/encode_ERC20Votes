@@ -1,20 +1,37 @@
 {
+    "type": "node",
+    "request": "launch",
+    "name": "Mocha Tests",
+    "runtimeArgs": [
+        "${workspaceFolder}/node_modules/ts-mocha/bin/ts-mocha",
+        "--timeout", "999999",
+        "-r", "esm",
+        "-p", "${workspaceFolder}/tsconfig.json", "${workspaceFolder}/tests/*.ts",
+    ],
+    "console": "integratedTerminal",
+    "scripts": {
+        "tests": "mocha --require ts-node/register tests/*.ts"
+      },
+    "protocol": "inspector",
     "configurations": [
-        
-    {
-        "name": "Attach",
-        "port": 9229,
-        "request": "attach",
-        "skipFiles": [
-            "<node_internals>/**"
-        ],
-        "type": "node"
-    },
         {
-            "type": "node-terminal",
-            "name": "JavaScript Debug Terminal",
+            "args": [
+                "-u",
+                "tdd",
+                "--timeout",
+                "999999",
+                "--colors",
+                "${workspaceFolder}/test"
+            ],
+            "internalConsoleOptions": "openOnSessionStart",
+            "name": "Mocha Tests",
+            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
             "request": "launch",
-            "cwd": "${workspaceFolder}"
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
         }
+    
     ]
 }

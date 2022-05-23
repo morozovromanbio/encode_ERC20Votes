@@ -1,8 +1,7 @@
 import { Contract, ethers } from "ethers";
 import "dotenv/config";
-import * as ballotJson from "../artifacts/contracts/CustomBallot.sol/CustomBallot.json";
-// eslint-disable-next-line node/no-missing-import
-import { CustomBallot } from "../typechain";
+import * as tokenJson from "../../artifacts/contracts/Token.sol/MyToken.json";
+import { MyToken } from "../../typechain";
 
 // This key is already public on Herong's Tutorial Examples - v1.03, by Dr. Herong Yang
 // Do never expose your keys like this
@@ -40,23 +39,20 @@ async function main() {
   if (balance < 0.01) {
     throw new Error("Not enough ether");
   }
-  if (process.argv.length < 3) throw new Error("CustomBallot address missing");
-  const ballotAddress = process.argv[2];
-  if (process.argv.length < 4) throw new Error("Voter address missing");
-  const voterAddress = process.argv[3];
-  console.log(
-    `Attaching ballot contract interface to address ${ballotAddress}`
-  );
-  const ballotContract: CustomBallot = new Contract(
-    ballotAddress,
-    ballotJson.abi,
+
+  if (process.argv.length < 3) throw new Error("Token address missing");
+  const tokenAddress = process.argv[2];
+  if (process.argv.length < 4) throw new Error("Delegate address missing");
+  const delegateAddress = process.argv[3];
+
+  const tokenContract: MyToken = new Contract(
+    tokenAddress,
+    tokenJson.abi,
     signer
-  ) as CustomBallot;
-  const chairpersonAddress = await ballotContract.chairperson();
-  if (chairpersonAddress !== signer.address)
-    throw new Error("Caller is not the chairperson for this contract");
-  console.log(`Giving right to vote to ${voterAddress}`);
-  const tx = await ballotContract.giveRightToVote(voterAddress);
+  ) as MyToken;
+
+  console.log(`Delegate right to vote to ${delegateAddress}`);
+  const tx = await tokenContract.delegate(delegateAddress);
   console.log("Awaiting confirmations");
   await tx.wait();
   console.log(`Transaction completed. Hash: ${tx.hash}`);

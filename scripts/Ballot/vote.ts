@@ -1,7 +1,7 @@
 import { Contract, ethers } from "ethers";
 import "dotenv/config";
-import * as tokenJson from "../../artifacts/contracts/Token.sol/MyToken.json";
-import { MyToken } from "../../typechain";
+import * as ballotJson from "../../artifacts/contracts/CustomBallot.sol/CustomBallot.json";
+import { CustomBallot } from "../../typechain";
 
 // This key is already public on Herong's Tutorial Examples - v1.03, by Dr. Herong Yang
 // Do never expose your keys like this
@@ -40,27 +40,32 @@ async function main() {
     throw new Error("Not enough ether");
   }
 
-  if (process.argv.length < 3) throw new Error("Token address missing");
-  const tokenAddress = process.argv[2];
-  if (process.argv.length < 4) throw new Error("Voter address missing");
-  const voterAddress = process.argv[3];
-  if (process.argv.length < 5) throw new Error("Mint Amount");
-  const mintAmount = process.argv[4];
+  if (process.argv.length < 3) throw new Error("ballot address missing");
+  const ballotAddress = process.argv[2];
+  if (process.argv.length < 4) throw new Error("proposal missing");
+  const toProposal = process.argv[3];
+  if (process.argv.length < 5) throw new Error("vote Amount");
+  const tranferAmount = process.argv[4];
 
-  const tokenContract: MyToken = new Contract(
-    tokenAddress,
-    tokenJson.abi,
+  console.log("Attach CustomBallot contract");
+  const ballotContract: CustomBallot = new Contract(
+    ballotAddress,
+    ballotJson.abi,
     signer
-  ) as MyToken;
+  ) as CustomBallot;
 
-  console.log(`Mint right to vote to ${voterAddress}`);
-  const tx = await tokenContract.mint(voterAddress, mintAmount);
+  console.log(` vote to ${toProposal}`);
+  const tx = await ballotContract.vote(toProposal, tranferAmount);
   console.log("Awaiting confirmations");
   await tx.wait();
   console.log(`Transaction completed. Hash: ${tx.hash}`);
+
 }
 
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
+
+// Deployed TOKEN contract in the recording:  0x1f159032A02ebd98BA29A5Ae9FCa1BB742b04cF4
+//

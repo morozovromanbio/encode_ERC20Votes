@@ -4,10 +4,13 @@
   "description": "Lesson 8 for Encode Bootcamp May 2022",
   "main": "index.js",
   "license": "MIT",
+  "test": "ts-mocha -r esm -p tsconfig.json tests/**/*.ts",
+  "scripts": {
+    "tests": "mocha --require ts-node/register tests/**/*.ts"
+  },
   "private": true,
   "dependencies": {
     "@openzeppelin/contracts": "^4.5.0",
-    "chai": "^4.3.6",
     "hardhat": "^2.9.5"
   },
   "devDependencies": {
@@ -16,11 +19,12 @@
     "@nomiclabs/hardhat-waffle": "^2.0.0",
     "@typechain/ethers-v5": "^7.0.1",
     "@typechain/hardhat": "^2.3.0",
-    "@types/chai": "^4.2.21",
-    "@types/mocha": "^9.0.0",
+    "@types/chai": "^4.3.1",
+    "@types/mocha": "^9.1.1",
     "@types/node": "^12.0.0",
     "@typescript-eslint/eslint-plugin": "^4.29.1",
     "@typescript-eslint/parser": "^4.29.1",
+    "chai": "^4.3.6",
     "dotenv": "^10.0.0",
     "eslint": "^7.29.0",
     "eslint-config-prettier": "^8.3.0",
@@ -32,13 +36,14 @@
     "ethereum-waffle": "^3.0.0",
     "ethers": "^5.0.0",
     "hardhat-gas-reporter": "^1.0.4",
+    "mocha": "^10.0.0",
     "prettier": "^2.3.2",
     "prettier-plugin-solidity": "^1.0.0-beta.13",
     "solhint": "^3.3.6",
     "solidity-coverage": "^0.7.16",
-    "ts-node": "^10.1.0",
+    "ts-node": "^10.7.0",
     "typechain": "^5.1.2",
-    "typescript": "^4.5.2"
+    "typescript": "^4.6.4"
   },
   "engines": {
     "node": ">=8.3.0"

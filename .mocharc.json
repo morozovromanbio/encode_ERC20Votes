@@ -2,6 +2,6 @@
   "extension": ["js", "ts"],
   "package": ".package.json",
   "require": "ts-node/register/files",
-  "watch-files": ["lib/**/*.ts", "test/**/*.ts"],
+  "watch-files": ["lib/**/*.ts", "tests/*.ts"],
   "timeout": 20000
 }

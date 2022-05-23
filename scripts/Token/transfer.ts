@@ -42,10 +42,10 @@ async function main() {
 
   if (process.argv.length < 3) throw new Error("Token address missing");
   const tokenAddress = process.argv[2];
-  if (process.argv.length < 4) throw new Error("Voter address missing");
-  const voterAddress = process.argv[3];
-  if (process.argv.length < 5) throw new Error("Mint Amount");
-  const mintAmount = process.argv[4];
+  if (process.argv.length < 4) throw new Error("toAddres address missing");
+  const toAddress = process.argv[3];
+  if (process.argv.length < 5) throw new Error("trander Amount");
+  const tranferAmount = process.argv[4];
 
   const tokenContract: MyToken = new Contract(
     tokenAddress,
@@ -53,8 +53,8 @@ async function main() {
     signer
   ) as MyToken;
 
-  console.log(`Mint right to vote to ${voterAddress}`);
-  const tx = await tokenContract.mint(voterAddress, mintAmount);
+  console.log(` transfer to ${toAddress}`);
+  const tx = await tokenContract.transfer(toAddress, tranferAmount);
   console.log("Awaiting confirmations");
   await tx.wait();
   console.log(`Transaction completed. Hash: ${tx.hash}`);

@@ -3,6 +3,7 @@ pragma solidity >=0.7.0 <0.9.0;
 
 interface IERC20Votes {
     function getVotes(address) external view returns (uint256);
+    function getPastVotes(address, uint256) external view returns (uint256);
 }
 
 contract CustomBallot {
@@ -35,7 +36,15 @@ contract CustomBallot {
         referenceBlock = block.number;
     }
 
-    function vote(uint256 proposal, uint256 amount) external {
+     function vote(uint256 proposal, uint256 amount) external {
+        uint256 votingPowerAvailable = votingPower(); 
+        require(votingPowerAvailable >= amount, "Has not enough voting power");
+        spentVotePower[msg.sender] += amount;
+        proposals[proposal].voteCount += amount;
+        emit Voted(msg.sender, proposal, amount, proposals[proposal].voteCount);
+    }
+
+    function voteNoSnap(uint256 proposal, uint256 amount) external {
         uint256 votingPowerAvailable = votingPower(); // TODO: Change this
         require(votingPowerAvailable >= amount, "Has not enough voting power");
         spentVotePower[msg.sender] += amount;
@@ -57,20 +66,19 @@ contract CustomBallot {
         winnerName_ = proposals[winningProposal()].name;
     }
 
-    function votingPower() public view returns (uint256 votPower) {
+    function votingPower() public view returns (uint256) {
+        return voteToken.getPastVotes(
+            msg.sender,
+            referenceBlock
+        ) - spentVotePower[msg.sender];
+    }
+    
+    function votingPowerNoSnap() public view returns (uint256 votPower) {
         //TODO: do this
         votPower =  voteToken.getVotes(msg.sender) - spentVotePower[msg.sender];
 
        return votPower;
     }
 
-    // function votingPower() private returns (uint256 votPower) {
     
-    //     votPower =  voteToken.getPastVotes(
-    //         msg.sender,
-    //         referenceBlock
-    //     ) - spentVotePower[msg.sender];
-
-    //    return votPower;
-    // }
 }

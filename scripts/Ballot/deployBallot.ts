@@ -1,12 +1,23 @@
-import { Contract, ethers } from "ethers";
+import { ethers } from "ethers";
 import "dotenv/config";
 import * as ballotJson from "../../artifacts/contracts/CustomBallot.sol/CustomBallot.json";
+
 import { CustomBallot } from "../../typechain";
 
 // This key is already public on Herong's Tutorial Examples - v1.03, by Dr. Herong Yang
 // Do never expose your keys like this
 const EXPOSED_KEY =
   "8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de8f";
+
+const PROPOSALS = ["Pro 1", "Pro 2", "Pro 3"];
+
+function convertStringArrayToBytes32(array: string[]) {
+  const bytes32Array = [];
+  for (let index = 0; index < array.length; index++) {
+    bytes32Array.push(ethers.utils.formatBytes32String(array[index]));
+  }
+  return bytes32Array;
+}
 
 function setupProvider() {
   const infuraOptions = process.env.INFURA_API_KEY
@@ -40,31 +51,24 @@ async function main() {
     throw new Error("Not enough ether");
   }
 
-  if (process.argv.length < 3) throw new Error("ballot address missing");
-  const ballotAddress = process.argv[2];
-  if (process.argv.length < 4) throw new Error("proposal missing");
-  const toProposal = process.argv[3];
-  if (process.argv.length < 5) throw new Error("vote Amount");
-  const tranferAmount = process.argv[4];
-
-  console.log("Attach CustomBallot contract");
-  const ballotContract: CustomBallot = new Contract(
-    ballotAddress,
+  console.log("Deploying CustomBallot contract");
+  const ballotFactory = new ethers.ContractFactory(
     ballotJson.abi,
+    ballotJson.bytecode,
     signer
-  ) as CustomBallot;
+  );
 
-  console.log(` vote to ${toProposal}`);
-  const tx = await ballotContract.vote(toProposal, tranferAmount);
+  const ballotContract: CustomBallot = (await ballotFactory.deploy(
+    convertStringArrayToBytes32(PROPOSALS),
+    "0x1f159032A02ebd98BA29A5Ae9FCa1BB742b04cF4"
+  )) as CustomBallot;
   console.log("Awaiting confirmations");
-  await tx.wait();
-  console.log(`Transaction completed. Hash: ${tx.hash}`);
+  await ballotContract.deployed();
+  console.log("Completed");
+  console.log(`Contract deployed at ${ballotContract.address}`);
 }
 
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
-
-// Deployed TOKEN contract in the recording:  0x1f159032A02ebd98BA29A5Ae9FCa1BB742b04cF4
-//

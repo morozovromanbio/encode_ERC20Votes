@@ -1,6 +1,7 @@
 import { Contract, ethers } from "ethers";
 import "dotenv/config";
 import * as ballotJson from "../../artifacts/contracts/CustomBallot.sol/CustomBallot.json";
+// eslint-disable-next-line node/no-missing-import
 import { CustomBallot } from "../../typechain";
 
 // This key is already public on Herong's Tutorial Examples - v1.03, by Dr. Herong Yang
@@ -42,10 +43,6 @@ async function main() {
 
   if (process.argv.length < 3) throw new Error("ballot address missing");
   const ballotAddress = process.argv[2];
-  if (process.argv.length < 4) throw new Error("proposal missing");
-  const toProposal = process.argv[3];
-  if (process.argv.length < 5) throw new Error("vote Amount");
-  const tranferAmount = process.argv[4];
 
   console.log("Attach CustomBallot contract");
   const ballotContract: CustomBallot = new Contract(
@@ -54,17 +51,16 @@ async function main() {
     signer
   ) as CustomBallot;
 
-  console.log(` vote to ${toProposal}`);
-  const tx = await ballotContract.vote(toProposal, tranferAmount);
-  console.log("Awaiting confirmations");
-  await tx.wait();
-  console.log(`Transaction completed. Hash: ${tx.hash}`);
+  const votingPowerBN = await ballotContract.votingPower();
+  const votingPower = ethers.utils.formatEther(votingPowerBN);
+  console.log("Voting Power", votingPower);
+  const referenceBlockNumberBN = await ballotContract.referenceBlock();
+  const referenceBlockNumber = ethers.utils.formatEther(referenceBlockNumberBN);
+  console.log("Reference Block Number:", referenceBlockNumber);
+
 }
 
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
-
-// Deployed TOKEN contract in the recording:  0x1f159032A02ebd98BA29A5Ae9FCa1BB742b04cF4
-//

@@ -9,8 +9,6 @@ import { CustomBallot } from "../../typechain";
 const EXPOSED_KEY =
   "8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de8f";
 
-const PROPOSALS = ["Pro 1", "Pro 2", "Pro 3"];
-
 function convertStringArrayToBytes32(array: string[]) {
   const bytes32Array = [];
   for (let index = 0; index < array.length; index++) {
@@ -51,7 +49,12 @@ async function main() {
     throw new Error("Not enough ether");
   }
 
-  console.log("Deploying CustomBallot contract");
+  if (process.argv.length < 3) throw new Error("VoteToken address missing");
+  const voteTokenAddress = process.argv[2];
+  const proposals = process.argv.slice(3);
+  if (proposals.length < 2) throw new Error("Not enough proposals provided");
+  
+  console.log(`Deploying CustomBallot with options (${proposals.join(', ')}) and voteTokenAddress=${voteTokenAddress}`);
   const ballotFactory = new ethers.ContractFactory(
     ballotJson.abi,
     ballotJson.bytecode,
@@ -59,8 +62,8 @@ async function main() {
   );
 
   const ballotContract: CustomBallot = (await ballotFactory.deploy(
-    convertStringArrayToBytes32(PROPOSALS),
-    "0x1f159032A02ebd98BA29A5Ae9FCa1BB742b04cF4"
+    convertStringArrayToBytes32(proposals),
+    voteTokenAddress
   )) as CustomBallot;
   console.log("Awaiting confirmations");
   await ballotContract.deployed();
